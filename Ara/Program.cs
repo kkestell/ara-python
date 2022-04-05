@@ -6,7 +6,9 @@ using Ara.Ast.Nodes;
 
 var stream = CharStreams.fromString(@"
     void foo(int bar) {
-      return 1
+      int x
+      x = 1
+      return x
     }
 ".Trim());
 var lexer = new AraLexer(stream);
@@ -18,7 +20,7 @@ var visitor = new ProgramBuilder();
 var prog = visitor.Visit(tree);
 Console.WriteLine(
     JsonSerializer.Serialize(
-        prog,
+        prog.Functions.First().Block.Statements,
         new JsonSerializerOptions { WriteIndented = true, MaxDepth = 0 }));
 
 namespace Ara.Ast.Nodes
@@ -39,8 +41,11 @@ namespace Ara.Ast.Nodes
     public readonly record struct VariableDeclarationStatement(Name Name, Type Type) : IStatement;
     public readonly record struct ReturnStatement(IExpression ReturnValue) : IStatement;
     public readonly record struct IfStatement(IExpression Condition, Block Block) : IStatement;
+    public readonly record struct AssignmentStatement(Name Name, IExpression Expression) : IStatement;
 
-    public interface IExpression : IStatement
+    // AssignmentExpressionStatement, CallExpressionStatement
+
+    public interface IExpression
     {
     }
 
@@ -137,6 +142,13 @@ class StatementBuilder : AraBaseVisitor<IStatement>
             expressionBuilder.Visit(context.expression()),
             blockBuilder.Visit(context.block()));
     }
+
+    public override IStatement VisitAssignmentStatement([NotNull] AraParser.AssignmentStatementContext context)
+    {
+        return new AssignmentStatement(
+            new Name(context.name().GetText()),
+            expressionBuilder.Visit(context.expression()));
+    }
 }
 
 class ExpressionBuilder : AraBaseVisitor<IExpression>
@@ -173,5 +185,3 @@ class ExpressionBuilder : AraBaseVisitor<IExpression>
         return new AtomExpression(new Atom(context.GetText()));
     }
 }
-
-

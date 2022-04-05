@@ -84,6 +84,13 @@ public interface IAraVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitIfStatement([NotNull] AraParser.IfStatementContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>assignmentStatement</c>
+	/// labeled alternative in <see cref="AraParser.statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitAssignmentStatement([NotNull] AraParser.AssignmentStatementContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>atomExpression</c>
 	/// labeled alternative in <see cref="AraParser.expression"/>.
 	/// </summary>
