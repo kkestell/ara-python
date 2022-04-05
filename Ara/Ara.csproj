@@ -2,24 +2,31 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <LangVersion>9</LangVersion>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <WarningLevel>4</WarningLevel>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>1701;1702;3021</NoWarn>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MoonSharp" Version="2.0.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="16.7.56" />
-    <PackageReference Include="Pidgin" Version="2.5.0" />
-    <PackageReference Include="Roslynator.Analyzers" Version="3.0.0">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    <None Remove="Antlr4" />
+    <None Remove="Antlr4.Runtime.Standard" />
+    <None Remove="antlr-4.9.3-complete.jar" />
+    <None Remove="Ara.interp" />
+    <None Remove="Ara.tokens" />
+    <None Remove="AraLexer.interp" />
+    <None Remove="AraLexer.tokens" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="..\.editorconfig" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Ast\" />
+    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.9.3" />
   </ItemGroup>
 </Project>
