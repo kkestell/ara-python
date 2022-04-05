@@ -56,19 +56,19 @@ public interface IAraVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitBlock([NotNull] AraParser.BlockContext context);
 	/// <summary>
-	/// Visit a parse tree produced by the <c>variableInitialization</c>
+	/// Visit a parse tree produced by the <c>variableInitializationStatement</c>
 	/// labeled alternative in <see cref="AraParser.statement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitVariableInitialization([NotNull] AraParser.VariableInitializationContext context);
+	Result VisitVariableInitializationStatement([NotNull] AraParser.VariableInitializationStatementContext context);
 	/// <summary>
-	/// Visit a parse tree produced by the <c>variableDeclaration</c>
+	/// Visit a parse tree produced by the <c>variableDeclarationStatement</c>
 	/// labeled alternative in <see cref="AraParser.statement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitVariableDeclaration([NotNull] AraParser.VariableDeclarationContext context);
+	Result VisitVariableDeclarationStatement([NotNull] AraParser.VariableDeclarationStatementContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>returnStatement</c>
 	/// labeled alternative in <see cref="AraParser.statement"/>.
@@ -84,19 +84,12 @@ public interface IAraVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitIfStatement([NotNull] AraParser.IfStatementContext context);
 	/// <summary>
-	/// Visit a parse tree produced by the <c>valueExpression</c>
+	/// Visit a parse tree produced by the <c>atomExpression</c>
 	/// labeled alternative in <see cref="AraParser.expression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitValueExpression([NotNull] AraParser.ValueExpressionContext context);
-	/// <summary>
-	/// Visit a parse tree produced by the <c>stringLiteral</c>
-	/// labeled alternative in <see cref="AraParser.expression"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitStringLiteral([NotNull] AraParser.StringLiteralContext context);
+	Result VisitAtomExpression([NotNull] AraParser.AtomExpressionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>infixExpression</c>
 	/// labeled alternative in <see cref="AraParser.expression"/>.
@@ -105,19 +98,19 @@ public interface IAraVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitInfixExpression([NotNull] AraParser.InfixExpressionContext context);
 	/// <summary>
-	/// Visit a parse tree produced by the <c>functionCall</c>
-	/// labeled alternative in <see cref="AraParser.expression"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitFunctionCall([NotNull] AraParser.FunctionCallContext context);
-	/// <summary>
 	/// Visit a parse tree produced by the <c>parensExpression</c>
 	/// labeled alternative in <see cref="AraParser.expression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitParensExpression([NotNull] AraParser.ParensExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>functionCallExpression</c>
+	/// labeled alternative in <see cref="AraParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFunctionCallExpression([NotNull] AraParser.FunctionCallExpressionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>unaryExpression</c>
 	/// labeled alternative in <see cref="AraParser.expression"/>.
@@ -151,6 +144,12 @@ public interface IAraVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitFalse([NotNull] AraParser.FalseContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AraParser.string"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitString([NotNull] AraParser.StringContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AraParser.name"/>.
 	/// </summary>

@@ -1,2 +1,1 @@
-﻿
-java -jar antlr-4.9.3-complete.jar -Dlanguage=CSharp -visitor -no-listener Flea.g4
+﻿java -jar antlr-4.9.3-complete.jar -Dlanguage=CSharp -visitor -no-listener Ara.g4

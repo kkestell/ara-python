@@ -17,8 +17,8 @@ block
     ;
 
 statement
-    : type name '=' expression                                         # variableInitialization
-    | type name                                                        # variableDeclaration
+    : type name '=' expression                                         # variableInitializationStatement
+    | type name                                                        # variableDeclarationStatement
     | 'return' expression?                                             # returnStatement
     | 'if' '(' expression ')' block                                    # ifStatement
     ;
@@ -30,14 +30,14 @@ expression
     | left=expression op=('+' | '-') right=expression                  # infixExpression
     | left=expression op=('<' | '<=' | '>' | '>=') right=expression    # infixExpression
     | left=expression op=('==' | '!=') right=expression                # infixExpression
-    | name '(' arguments+=expression* (',' arguments+=expression)* ')' # functionCall
-    | value=STRING                                                     # stringLiteral
-    | value=atom                                                       # valueExpression
+    | name '(' arguments+=expression* (',' arguments+=expression)* ')' # functionCallExpression
+    | value=atom                                                       # atomExpression
     ;
 
 atom
     : number
     | bool
+    | string
     | name
     ;
 
@@ -50,13 +50,17 @@ bool
     | 'false' # false
     ;
 
-ID
-    : [a-zA-Z][a-zA-Z0-9_]*
+string
+    : value=STRING
     ;
 
 name
-   : value=ID
-   ;
+    : value=ID
+    ;
+
+ID
+    : [a-zA-Z][a-zA-Z0-9_]*
+    ;
 
 STRING
     : '"' (ESC | ~( '\\' | '"' ))* '"'
