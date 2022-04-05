@@ -21,7 +21,6 @@ statement
     | type name                                                        # variableDeclaration
     | 'return' expression?                                             # returnStatement
     | 'if' '(' expression ')' block                                    # ifStatement
-    | expression                                                       # expressionStatement
     ;
 
 expression

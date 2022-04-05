@@ -28,6 +28,12 @@ namespace Ara.Ast.Nodes
     public readonly record struct Function(string Name, IImmutableList<Parameter> Parameters);
 
     public readonly record struct Parameter(string Name, string Type);
+
+    public readonly record struct Block(IReadOnlyList<Statement> Statements);
+
+    public readonly record struct Statement();
+
+    public readonly record struct Expression();
 }
 
 class ProgramBuilder : AraBaseVisitor<Ara.Ast.Nodes.Program>
@@ -53,6 +59,48 @@ class FunctionBuilder : AraBaseVisitor<Function>
             .Select(x => new Parameter(x.name().value.Text, x.type().value.Text))
             .ToImmutableList();
 
+        var block = new BlockBuilder().Visit(context.block());
+
         return new Function(id.ToString(), args);
     }
+}
+
+class BlockBuilder : AraBaseVisitor<Block>
+{
+    public override Block VisitBlock([NotNull] AraParser.BlockContext context)
+    {
+        var statementBuilder = new StatementBuilder();
+        var statements = context.statement()
+            .Select(x => statementBuilder.Visit(x))
+            .ToImmutableList();
+
+        return new Block(statements);
+    }
+}
+
+class StatementBuilder : AraBaseVisitor<Statement>
+{
+    public override Statement VisitVariableInitialization([NotNull] AraParser.VariableInitializationContext context)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override Statement VisitVariableDeclaration([NotNull] AraParser.VariableDeclarationContext context)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override Statement VisitReturnStatement([NotNull] AraParser.ReturnStatementContext context)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override Statement VisitIfStatement([NotNull] AraParser.IfStatementContext context)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class ExpressionBuilder : AraBaseVisitor<Expression>
+{
 }
