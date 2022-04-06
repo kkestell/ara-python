@@ -17,22 +17,22 @@ block
     ;
 
 statement
-    : type name '=' expression                                         # variableInitializationStatement
-    | type name                                                        # variableDeclarationStatement
-    | 'return' expression?                                             # returnStatement
-    | 'if' '(' expression ')' block                                    # ifStatement
-    | name '=' expression                                              # assignmentStatement
+    : type name '=' expression                                         # variableInitialization
+    | type name                                                        # variableDeclaration
+    | 'return' expression?                                             # return
+    | 'if' '(' expression ')' block                                    # if
+    | name '=' expression                                              # assignment
     ;
 
 expression
-    : '(' expression ')'                                               # parensExpression
-    | op=('+' | '-') expression                                        # unaryExpression
-    | left=expression op=('*' | '/' | '%') right=expression            # infixExpression
-    | left=expression op=('+' | '-') right=expression                  # infixExpression
-    | left=expression op=('<' | '<=' | '>' | '>=') right=expression    # infixExpression
-    | left=expression op=('==' | '!=') right=expression                # infixExpression
-    | name '(' arguments+=expression* (',' arguments+=expression)* ')' # functionCallExpression
-    | value=atom                                                       # atomExpression
+    : '(' expression ')'                                               # parens
+    | op=('+' | '-') expression                                        # unary
+    | left=expression op=('*' | '/' | '%') right=expression            # infix
+    | left=expression op=('+' | '-') right=expression                  # infix
+    | left=expression op=('<' | '<=' | '>' | '>=') right=expression    # infix
+    | left=expression op=('==' | '!=') right=expression                # infix
+    | name '(' arguments+=expression* (',' arguments+=expression)* ')' # functionCall
+    | value=atom                                                       # atomExpr
     ;
 
 atom

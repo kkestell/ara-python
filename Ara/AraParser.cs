@@ -362,37 +362,22 @@ public partial class AraParser : Parser {
 			base.CopyFrom(context);
 		}
 	}
-	public partial class AssignmentStatementContext : StatementContext {
+	public partial class AssignmentContext : StatementContext {
 		[System.Diagnostics.DebuggerNonUserCode] public NameContext name() {
 			return GetRuleContext<NameContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
 			return GetRuleContext<ExpressionContext>(0);
 		}
-		public AssignmentStatementContext(StatementContext context) { CopyFrom(context); }
+		public AssignmentContext(StatementContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IAraVisitor<TResult> typedVisitor = visitor as IAraVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitAssignmentStatement(this);
+			if (typedVisitor != null) return typedVisitor.VisitAssignment(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class VariableDeclarationStatementContext : StatementContext {
-		[System.Diagnostics.DebuggerNonUserCode] public TypeContext type() {
-			return GetRuleContext<TypeContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public NameContext name() {
-			return GetRuleContext<NameContext>(0);
-		}
-		public VariableDeclarationStatementContext(StatementContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IAraVisitor<TResult> typedVisitor = visitor as IAraVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitVariableDeclarationStatement(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-	public partial class VariableInitializationStatementContext : StatementContext {
+	public partial class VariableInitializationContext : StatementContext {
 		[System.Diagnostics.DebuggerNonUserCode] public TypeContext type() {
 			return GetRuleContext<TypeContext>(0);
 		}
@@ -402,38 +387,53 @@ public partial class AraParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
 			return GetRuleContext<ExpressionContext>(0);
 		}
-		public VariableInitializationStatementContext(StatementContext context) { CopyFrom(context); }
+		public VariableInitializationContext(StatementContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IAraVisitor<TResult> typedVisitor = visitor as IAraVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitVariableInitializationStatement(this);
+			if (typedVisitor != null) return typedVisitor.VisitVariableInitialization(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class ReturnStatementContext : StatementContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
-			return GetRuleContext<ExpressionContext>(0);
-		}
-		public ReturnStatementContext(StatementContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IAraVisitor<TResult> typedVisitor = visitor as IAraVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitReturnStatement(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-	public partial class IfStatementContext : StatementContext {
+	public partial class IfContext : StatementContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
 			return GetRuleContext<ExpressionContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public BlockContext block() {
 			return GetRuleContext<BlockContext>(0);
 		}
-		public IfStatementContext(StatementContext context) { CopyFrom(context); }
+		public IfContext(StatementContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IAraVisitor<TResult> typedVisitor = visitor as IAraVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitIfStatement(this);
+			if (typedVisitor != null) return typedVisitor.VisitIf(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class ReturnContext : StatementContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		public ReturnContext(StatementContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IAraVisitor<TResult> typedVisitor = visitor as IAraVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitReturn(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class VariableDeclarationContext : StatementContext {
+		[System.Diagnostics.DebuggerNonUserCode] public TypeContext type() {
+			return GetRuleContext<TypeContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public NameContext name() {
+			return GetRuleContext<NameContext>(0);
+		}
+		public VariableDeclarationContext(StatementContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IAraVisitor<TResult> typedVisitor = visitor as IAraVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitVariableDeclaration(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
@@ -447,7 +447,7 @@ public partial class AraParser : Parser {
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,5,Context) ) {
 			case 1:
-				_localctx = new VariableInitializationStatementContext(_localctx);
+				_localctx = new VariableInitializationContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
 				State = 61;
@@ -461,7 +461,7 @@ public partial class AraParser : Parser {
 				}
 				break;
 			case 2:
-				_localctx = new VariableDeclarationStatementContext(_localctx);
+				_localctx = new VariableDeclarationContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
 				State = 66;
@@ -471,7 +471,7 @@ public partial class AraParser : Parser {
 				}
 				break;
 			case 3:
-				_localctx = new ReturnStatementContext(_localctx);
+				_localctx = new ReturnContext(_localctx);
 				EnterOuterAlt(_localctx, 3);
 				{
 				State = 69;
@@ -489,7 +489,7 @@ public partial class AraParser : Parser {
 				}
 				break;
 			case 4:
-				_localctx = new IfStatementContext(_localctx);
+				_localctx = new IfContext(_localctx);
 				EnterOuterAlt(_localctx, 4);
 				{
 				State = 73;
@@ -505,7 +505,7 @@ public partial class AraParser : Parser {
 				}
 				break;
 			case 5:
-				_localctx = new AssignmentStatementContext(_localctx);
+				_localctx = new AssignmentContext(_localctx);
 				EnterOuterAlt(_localctx, 5);
 				{
 				State = 79;
@@ -541,20 +541,67 @@ public partial class AraParser : Parser {
 			base.CopyFrom(context);
 		}
 	}
-	public partial class AtomExpressionContext : ExpressionContext {
+	public partial class ParensContext : ExpressionContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		public ParensContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IAraVisitor<TResult> typedVisitor = visitor as IAraVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitParens(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class FunctionCallContext : ExpressionContext {
+		public ExpressionContext _expression;
+		public IList<ExpressionContext> _arguments = new List<ExpressionContext>();
+		[System.Diagnostics.DebuggerNonUserCode] public NameContext name() {
+			return GetRuleContext<NameContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
+		}
+		public FunctionCallContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IAraVisitor<TResult> typedVisitor = visitor as IAraVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFunctionCall(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class AtomExprContext : ExpressionContext {
 		public AtomContext value;
 		[System.Diagnostics.DebuggerNonUserCode] public AtomContext atom() {
 			return GetRuleContext<AtomContext>(0);
 		}
-		public AtomExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		public AtomExprContext(ExpressionContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IAraVisitor<TResult> typedVisitor = visitor as IAraVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitAtomExpression(this);
+			if (typedVisitor != null) return typedVisitor.VisitAtomExpr(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class InfixExpressionContext : ExpressionContext {
+	public partial class UnaryContext : ExpressionContext {
+		public IToken op;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode OP_ADD() { return GetToken(AraParser.OP_ADD, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode OP_SUB() { return GetToken(AraParser.OP_SUB, 0); }
+		public UnaryContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IAraVisitor<TResult> typedVisitor = visitor as IAraVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitUnary(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class InfixContext : ExpressionContext {
 		public ExpressionContext left;
 		public IToken op;
 		public ExpressionContext right;
@@ -575,58 +622,11 @@ public partial class AraParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode OP_GT_EQ() { return GetToken(AraParser.OP_GT_EQ, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode OP_EQ() { return GetToken(AraParser.OP_EQ, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode OP_NE() { return GetToken(AraParser.OP_NE, 0); }
-		public InfixExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		public InfixContext(ExpressionContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IAraVisitor<TResult> typedVisitor = visitor as IAraVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitInfixExpression(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-	public partial class ParensExpressionContext : ExpressionContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
-			return GetRuleContext<ExpressionContext>(0);
-		}
-		public ParensExpressionContext(ExpressionContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IAraVisitor<TResult> typedVisitor = visitor as IAraVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitParensExpression(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-	public partial class FunctionCallExpressionContext : ExpressionContext {
-		public ExpressionContext _expression;
-		public IList<ExpressionContext> _arguments = new List<ExpressionContext>();
-		[System.Diagnostics.DebuggerNonUserCode] public NameContext name() {
-			return GetRuleContext<NameContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
-			return GetRuleContexts<ExpressionContext>();
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
-			return GetRuleContext<ExpressionContext>(i);
-		}
-		public FunctionCallExpressionContext(ExpressionContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IAraVisitor<TResult> typedVisitor = visitor as IAraVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitFunctionCallExpression(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-	public partial class UnaryExpressionContext : ExpressionContext {
-		public IToken op;
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
-			return GetRuleContext<ExpressionContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode OP_ADD() { return GetToken(AraParser.OP_ADD, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode OP_SUB() { return GetToken(AraParser.OP_SUB, 0); }
-		public UnaryExpressionContext(ExpressionContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IAraVisitor<TResult> typedVisitor = visitor as IAraVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitUnaryExpression(this);
+			if (typedVisitor != null) return typedVisitor.VisitInfix(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
@@ -653,7 +653,7 @@ public partial class AraParser : Parser {
 			switch ( Interpreter.AdaptivePredict(TokenStream,8,Context) ) {
 			case 1:
 				{
-				_localctx = new ParensExpressionContext(_localctx);
+				_localctx = new ParensContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
 
@@ -667,14 +667,14 @@ public partial class AraParser : Parser {
 				break;
 			case 2:
 				{
-				_localctx = new UnaryExpressionContext(_localctx);
+				_localctx = new UnaryContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
 				State = 90;
-				((UnaryExpressionContext)_localctx).op = TokenStream.LT(1);
+				((UnaryContext)_localctx).op = TokenStream.LT(1);
 				_la = TokenStream.LA(1);
 				if ( !(_la==OP_ADD || _la==OP_SUB) ) {
-					((UnaryExpressionContext)_localctx).op = ErrorHandler.RecoverInline(this);
+					((UnaryContext)_localctx).op = ErrorHandler.RecoverInline(this);
 				}
 				else {
 					ErrorHandler.ReportMatch(this);
@@ -686,7 +686,7 @@ public partial class AraParser : Parser {
 				break;
 			case 3:
 				{
-				_localctx = new FunctionCallExpressionContext(_localctx);
+				_localctx = new FunctionCallContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
 				State = 92;
@@ -700,8 +700,8 @@ public partial class AraParser : Parser {
 					{
 					{
 					State = 94;
-					((FunctionCallExpressionContext)_localctx)._expression = expression(0);
-					((FunctionCallExpressionContext)_localctx)._arguments.Add(((FunctionCallExpressionContext)_localctx)._expression);
+					((FunctionCallContext)_localctx)._expression = expression(0);
+					((FunctionCallContext)_localctx)._arguments.Add(((FunctionCallContext)_localctx)._expression);
 					}
 					}
 					State = 99;
@@ -717,8 +717,8 @@ public partial class AraParser : Parser {
 					State = 100;
 					Match(T__1);
 					State = 101;
-					((FunctionCallExpressionContext)_localctx)._expression = expression(0);
-					((FunctionCallExpressionContext)_localctx)._arguments.Add(((FunctionCallExpressionContext)_localctx)._expression);
+					((FunctionCallContext)_localctx)._expression = expression(0);
+					((FunctionCallContext)_localctx)._arguments.Add(((FunctionCallContext)_localctx)._expression);
 					}
 					}
 					State = 106;
@@ -731,11 +731,11 @@ public partial class AraParser : Parser {
 				break;
 			case 4:
 				{
-				_localctx = new AtomExpressionContext(_localctx);
+				_localctx = new AtomExprContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
 				State = 109;
-				((AtomExpressionContext)_localctx).value = atom();
+				((AtomExprContext)_localctx).value = atom();
 				}
 				break;
 			}
@@ -754,86 +754,86 @@ public partial class AraParser : Parser {
 					switch ( Interpreter.AdaptivePredict(TokenStream,9,Context) ) {
 					case 1:
 						{
-						_localctx = new InfixExpressionContext(new ExpressionContext(_parentctx, _parentState));
-						((InfixExpressionContext)_localctx).left = _prevctx;
+						_localctx = new InfixContext(new ExpressionContext(_parentctx, _parentState));
+						((InfixContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 112;
 						if (!(Precpred(Context, 6))) throw new FailedPredicateException(this, "Precpred(Context, 6)");
 						State = 113;
-						((InfixExpressionContext)_localctx).op = TokenStream.LT(1);
+						((InfixContext)_localctx).op = TokenStream.LT(1);
 						_la = TokenStream.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << OP_MUL) | (1L << OP_DIV) | (1L << OP_MOD))) != 0)) ) {
-							((InfixExpressionContext)_localctx).op = ErrorHandler.RecoverInline(this);
+							((InfixContext)_localctx).op = ErrorHandler.RecoverInline(this);
 						}
 						else {
 							ErrorHandler.ReportMatch(this);
 						    Consume();
 						}
 						State = 114;
-						((InfixExpressionContext)_localctx).right = expression(7);
+						((InfixContext)_localctx).right = expression(7);
 						}
 						break;
 					case 2:
 						{
-						_localctx = new InfixExpressionContext(new ExpressionContext(_parentctx, _parentState));
-						((InfixExpressionContext)_localctx).left = _prevctx;
+						_localctx = new InfixContext(new ExpressionContext(_parentctx, _parentState));
+						((InfixContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 115;
 						if (!(Precpred(Context, 5))) throw new FailedPredicateException(this, "Precpred(Context, 5)");
 						State = 116;
-						((InfixExpressionContext)_localctx).op = TokenStream.LT(1);
+						((InfixContext)_localctx).op = TokenStream.LT(1);
 						_la = TokenStream.LA(1);
 						if ( !(_la==OP_ADD || _la==OP_SUB) ) {
-							((InfixExpressionContext)_localctx).op = ErrorHandler.RecoverInline(this);
+							((InfixContext)_localctx).op = ErrorHandler.RecoverInline(this);
 						}
 						else {
 							ErrorHandler.ReportMatch(this);
 						    Consume();
 						}
 						State = 117;
-						((InfixExpressionContext)_localctx).right = expression(6);
+						((InfixContext)_localctx).right = expression(6);
 						}
 						break;
 					case 3:
 						{
-						_localctx = new InfixExpressionContext(new ExpressionContext(_parentctx, _parentState));
-						((InfixExpressionContext)_localctx).left = _prevctx;
+						_localctx = new InfixContext(new ExpressionContext(_parentctx, _parentState));
+						((InfixContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 118;
 						if (!(Precpred(Context, 4))) throw new FailedPredicateException(this, "Precpred(Context, 4)");
 						State = 119;
-						((InfixExpressionContext)_localctx).op = TokenStream.LT(1);
+						((InfixContext)_localctx).op = TokenStream.LT(1);
 						_la = TokenStream.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << OP_LT) | (1L << OP_LT_EQ) | (1L << OP_GT) | (1L << OP_GT_EQ))) != 0)) ) {
-							((InfixExpressionContext)_localctx).op = ErrorHandler.RecoverInline(this);
+							((InfixContext)_localctx).op = ErrorHandler.RecoverInline(this);
 						}
 						else {
 							ErrorHandler.ReportMatch(this);
 						    Consume();
 						}
 						State = 120;
-						((InfixExpressionContext)_localctx).right = expression(5);
+						((InfixContext)_localctx).right = expression(5);
 						}
 						break;
 					case 4:
 						{
-						_localctx = new InfixExpressionContext(new ExpressionContext(_parentctx, _parentState));
-						((InfixExpressionContext)_localctx).left = _prevctx;
+						_localctx = new InfixContext(new ExpressionContext(_parentctx, _parentState));
+						((InfixContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 121;
 						if (!(Precpred(Context, 3))) throw new FailedPredicateException(this, "Precpred(Context, 3)");
 						State = 122;
-						((InfixExpressionContext)_localctx).op = TokenStream.LT(1);
+						((InfixContext)_localctx).op = TokenStream.LT(1);
 						_la = TokenStream.LA(1);
 						if ( !(_la==OP_EQ || _la==OP_NE) ) {
-							((InfixExpressionContext)_localctx).op = ErrorHandler.RecoverInline(this);
+							((InfixContext)_localctx).op = ErrorHandler.RecoverInline(this);
 						}
 						else {
 							ErrorHandler.ReportMatch(this);
 						    Consume();
 						}
 						State = 123;
-						((InfixExpressionContext)_localctx).right = expression(4);
+						((InfixContext)_localctx).right = expression(4);
 						}
 						break;
 					}
