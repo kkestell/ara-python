@@ -1,12 +1,12 @@
-namespace Ara.Ast
+namespace Ara
 {
     public class BinaryOp : IExpr
     {
-        public BinaryOpType Type { get; }
+        public BinaryOperatorType Type { get; }
         public IExpr Left { get; }
         public IExpr Right { get; }
 
-        public BinaryOp(BinaryOpType type, IExpr left, IExpr right)
+        public BinaryOp(BinaryOperatorType type, IExpr left, IExpr right)
         {
             Type = type;
             Left = left;

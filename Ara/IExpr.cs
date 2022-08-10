@@ -1,6 +1,6 @@
 using System;
 
-namespace Ara.Ast
+namespace Ara
 {
     public interface IExpr : IEquatable<IExpr>
     {

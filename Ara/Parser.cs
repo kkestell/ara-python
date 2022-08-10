@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Immutable;
-using Ara.Ast;
 using Pidgin;
 using Pidgin.Comment;
 using Pidgin.Expression;
@@ -9,13 +8,8 @@ using static Pidgin.Parser<char>;
 
 namespace Ara
 {
-    public static class Parser
+    public class Parser
     {
-        private const char LeftBrace = '{';
-        private const char RightBrace = '}';
-        private const char LeftBracket = '[';
-        private const char RightBracket = ']';
-        private const char Colon = ':';
         private const char LeftParen = '(';
         private const char RightParen = ')';
         private const char DoubleQuote = '"';
@@ -24,12 +18,13 @@ namespace Ara
         private const char Minus = '-';
         private const char Star = '*';
         private const char Comma = ',';
+        private const char SemiColon = ';';
 
-        //private static readonly Parser<char, Unit> LineComment =
-        //    CommentParser.SkipLineComment(Tok(String("//")));
+        private static readonly Parser<char, Unit> LineComment =
+            CommentParser.SkipLineComment(Tok(String("//")));
 
-        //private static readonly Parser<char, Unit> BlockComment =
-        //    CommentParser.SkipBlockComment(Tok(String("/*")), Tok(String("*/")));
+        private static readonly Parser<char, Unit> BlockComment =
+            CommentParser.SkipBlockComment(Tok(String("/*")), Tok(String("*/")));
 
         private static readonly Parser<char, IExpr> Identifier =
             Tok(Letter.Then(LetterOrDigit.ManyString(), (first, rest) => first + rest))
@@ -38,42 +33,33 @@ namespace Ara
 
         private static readonly Parser<char, IExpr> Number =
             Tok(Real)
-                .Select<IExpr>(value => new Literal(value))
+                .Select<IExpr>(value => new Number(value))
                 .Labelled("Number");
 
         private static readonly Parser<char, IExpr> String =
             Tok(Token(c => c != DoubleQuote).ManyString().Between(Char(DoubleQuote)))
-                .Select<IExpr>(value => new Literal(value))
+                .Select<IExpr>(value => new String(value))
                 .Labelled("String");
 
         private static readonly Parser<char, Func<IExpr, IExpr>> Negate =
             Unary(Tok(Char(Minus))
-                .ThenReturn(UnaryOpType.Negate));
+                .ThenReturn(UnaryOperatorType.Negate));
 
         private static readonly Parser<char, Func<IExpr, IExpr, IExpr>> Add =
             Binary(Tok(Char(Plus))
-                .ThenReturn(BinaryOpType.Add));
+                .ThenReturn(BinaryOperatorType.Add));
 
         private static readonly Parser<char, Func<IExpr, IExpr, IExpr>> Subtract =
             Binary(Tok(Char(Minus))
-                .ThenReturn(BinaryOpType.Subtract));
+                .ThenReturn(BinaryOperatorType.Subtract));
 
         private static readonly Parser<char, Func<IExpr, IExpr, IExpr>> Multiply =
             Binary(Tok(Char(Star))
-                .ThenReturn(BinaryOpType.Multiply));
+                .ThenReturn(BinaryOperatorType.Multiply));
 
         private static readonly Parser<char, Func<IExpr, IExpr, IExpr>> Divide =
             Binary(Tok(Char(ForwardSlash))
-                .ThenReturn(BinaryOpType.Divide));
-
-        private static readonly Parser<char, Literal> Json =
-            String.Or(Rec(() => Array)).Or(Rec(() => Object));
-
-        private static readonly Parser<char, Ast.Array> Array =
-            Json.Between(SkipWhitespaces)
-                .Separated(Comma)
-                .Between(LeftBracket, RightBracket)
-                .Select<Ast.Array>(els => new Ast.Array(els.ToImmutableArray()));
+                .ThenReturn(BinaryOperatorType.Divide));
 
         private static readonly Parser<char, IExpr> Expr =
             ExpressionParser.Build<char, IExpr>(expr =>
@@ -82,11 +68,11 @@ namespace Ara
                         Identifier,
                         Number,
                         String,
-                        Array
+                        Parenthesised(expr).Labelled("Parenthesised Expression")
                     ),
                     new[]
                     {
-                        //Operator.PostfixChainable(Call(expr)),
+                        Operator.PostfixChainable(Call(expr)),
                         Operator.Prefix(Negate),
                         Operator.InfixL(Multiply),
                         Operator.InfixL(Divide),
@@ -99,23 +85,19 @@ namespace Ara
         private static Parser<char, T> Tok<T>(Parser<char, T> p) =>
             Try(p).Before(SkipWhitespaces);
 
-        /*
         private static Parser<char, T> Parenthesised<T>(Parser<char, T> p) =>
             p.Between(Tok(Char(LeftParen)), Tok(Char(RightParen)));
-        */
 
-        private static Parser<char, Func<IExpr, IExpr>> Unary(Parser<char, UnaryOpType> op) =>
+        private static Parser<char, Func<IExpr, IExpr>> Unary(Parser<char, UnaryOperatorType> op) =>
             op.Select<Func<IExpr, IExpr>>(type => o => new UnaryOp(type, o));
 
-        private static Parser<char, Func<IExpr, IExpr, IExpr>> Binary(Parser<char, BinaryOpType> op) =>
+        private static Parser<char, Func<IExpr, IExpr, IExpr>> Binary(Parser<char, BinaryOperatorType> op) =>
             op.Select<Func<IExpr, IExpr, IExpr>>(type => (l, r) => new BinaryOp(type, l, r));
 
-        /*
         private static Parser<char, Func<IExpr, IExpr>> Call(Parser<char, IExpr> subExpr) =>
             Parenthesised(subExpr.Separated(Tok(Char(Comma))))
                 .Select<Func<IExpr, IExpr>>(args => method => new Call(method, args.ToImmutableArray()))
-                .Labelled("Function Call"); 
-        */
+                .Labelled("Function Call");
 
         public static IExpr ParseOrThrow(string input) =>
             Expr.ParseOrThrow(input);

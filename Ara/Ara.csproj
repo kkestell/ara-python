@@ -2,24 +2,11 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <LangVersion>9</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MoonSharp" Version="2.0.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="16.7.56" />
-    <PackageReference Include="Pidgin" Version="2.5.0" />
-    <PackageReference Include="Roslynator.Analyzers" Version="3.0.0">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="..\.editorconfig" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Ast\" />
+    <PackageReference Include="Pidgin" Version="3.2.0" />
   </ItemGroup>
 </Project>

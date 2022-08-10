@@ -1,6 +1,6 @@
-namespace Ara.Ast
+namespace Ara
 {
-    public enum BinaryOpType
+    public enum BinaryOperatorType
     {
         Add,
         Subtract,

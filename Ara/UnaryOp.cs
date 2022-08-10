@@ -1,11 +1,11 @@
-namespace Ara.Ast
+namespace Ara
 {
     public class UnaryOp : IExpr
     {
-        public UnaryOpType Type { get; }
+        public UnaryOperatorType Type { get; }
         public IExpr Expr { get; }
 
-        public UnaryOp(UnaryOpType type, IExpr expr)
+        public UnaryOp(UnaryOperatorType type, IExpr expr)
         {
             Type = type;
             Expr = expr;

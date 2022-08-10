@@ -1,4 +1,4 @@
-namespace Ara.Ast
+namespace Ara
 {
     public class Identifier : IExpr
     {

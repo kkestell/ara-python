@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using System.Linq;
 
-namespace Ara.Ast
+namespace Ara
 {
     public class Call : IExpr
     {
