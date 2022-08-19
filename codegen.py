@@ -30,7 +30,7 @@ class CodeGenerator:
             builder.ret_void()
         else:
             expression = self.expand_expression(return_node.expression, builder)
-            builder.ret(ir.Constant(ir.IntType(32), expression))
+            builder.ret(expression)
 
     def expand_expression(self, expression_node: Expression, builder: ir.IRBuilder):
         if issubclass(type(expression_node), Atom):
@@ -69,11 +69,12 @@ class CodeGenerator:
 
     def generate_code(self, source_file_node: SourceFile):
         self.module = ir.Module(name=source_file_node.module.name)
+        self.module.triple = "x86_64-unknown-linux-gnu"
         for function in source_file_node.functions:
             self.generate_function(function)
             pass
         return str(self.module)
 
 
-def generate_code(source_file_node: SourceFile):
+def generate_ir(source_file_node: SourceFile):
     return CodeGenerator().generate_code(source_file_node)

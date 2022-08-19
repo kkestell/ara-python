@@ -7,7 +7,7 @@ from lark import ast_utils, Transformer, v_args
 from lark.tree import Meta, Tree
 
 
-class AstNode(ast_utils.Ast):
+class AstNode(ast_utils.Ast, ABC):
     @abstractmethod
     def pretty(self):
         pass
@@ -25,11 +25,11 @@ class Type(AstNode, ast_utils.WithMeta):
         }
 
 
-class _Statement(AstNode):
+class _Statement(AstNode, ABC):
     pass
 
 
-class _Expression(AstNode):
+class _Expression(AstNode, ABC):
     @property
     @abstractmethod
     def native_type(self):
@@ -136,10 +136,29 @@ class Return(_Statement, ast_utils.WithMeta):
 
 
 @dataclass
+class Block(AstNode, ast_utils.WithMeta):
+    meta: Meta
+    statements: List[_Statement]
+
+    def pretty(self):
+        return {
+            "node": "block",
+            "statements": [x.pretty() for x in self.statements]
+        }
+
+
+@dataclass
 class If(_Statement, ast_utils.WithMeta):
     meta: Meta
     condition: _Expression
-    then: List[_Statement]
+    then: Block
+
+    def pretty(self):
+        return {
+            "node": "if",
+            "condition": self.condition.pretty(),
+            "then": self.then.pretty()
+        }
 
 
 @dataclass
@@ -165,18 +184,6 @@ class Parameter(AstNode, ast_utils.WithMeta):
             "node": "parameter",
             "name": self.name,
             "type": self.type.pretty()
-        }
-
-
-@dataclass
-class Block(AstNode, ast_utils.WithMeta):
-    meta: Meta
-    statements: List[_Statement]
-
-    def pretty(self):
-        return {
-            "node": "block",
-            "statements": [x.pretty() for x in self.statements]
         }
 
 

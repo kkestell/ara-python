@@ -21,15 +21,6 @@ start
     module	foo
     functions
       function
-        bar
-        parameters
-          parameter
-            foo
-            type	int
-        type	void
-        block
-          statements
-      function
         main
         parameters
           parameter
@@ -123,7 +114,7 @@ start
 
 ```llvm
 ; ModuleID = "foo"
-target triple = "unknown-unknown-unknown"
+target triple = "x86_64-unknown-linux-gnu"
 target datalayout = ""
 
 define i32 @"main"(i32 %".1")
@@ -132,4 +123,38 @@ entry:
   %"x" = add i32 0, add (i32 1, i32 mul (i32 2, i32 3))
   ret i32 i32 0
 }
+```
+
+### Assembly
+
+```
+$ llc ir.ll
+$ cat ir.s
+```
+
+```
+	.text
+	.file	"ir.ll"
+	.globl	main                        # -- Begin function main
+	.p2align	4, 0x90
+	.type	main,@function
+main:                                   # @main
+	.cfi_startproc
+# %bb.0:                                # %entry
+	movl	$42, %eax
+	retq
+.Lfunc_end0:
+	.size	main, .Lfunc_end0-main
+	.cfi_endproc
+                                        # -- End function
+	.section	".note.GNU-stack","",@progbits
+```
+
+### Link & Run
+
+```
+$ clang -o a.out test.o
+$ ./a.out 
+$ echo $?
+42
 ```
