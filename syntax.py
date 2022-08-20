@@ -1,3 +1,4 @@
+import json
 import sys
 from abc import abstractmethod, ABC
 from dataclasses import dataclass
@@ -235,6 +236,14 @@ class SourceFile(AstNode, ast_utils.WithMeta):
         }
 
 
+class Ast(object):
+    def __init__(self, root):
+        self.root = root
+    
+    def pretty(self):
+        return json.dumps(self.root.pretty(), indent=2)
+
+
 class AstTransformer(Transformer):
     def STRING(self, s):
         return s[1:-1]
@@ -270,4 +279,4 @@ class AstTransformer(Transformer):
 def build_ast(parse_tree: Tree):
     this_module = sys.modules[__name__]
     transformer = ast_utils.create_transformer(this_module, AstTransformer())
-    return transformer.transform(parse_tree)
+    return Ast(transformer.transform(parse_tree))

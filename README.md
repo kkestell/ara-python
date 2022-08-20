@@ -191,13 +191,8 @@ entry:
 ### Assembly
 
 ```
-$ llc ir.ll
-$ cat ir.s
-```
-
-```
         .text
-        .file   "ir.ll"
+        .file   "tmp.ll"
         .globl  main                    # -- Begin function main
         .p2align        4, 0x90
         .type   main,@function
@@ -216,6 +211,7 @@ main:                                   # @main
 ### Link & Run
 
 ```
-$ clang -o a.out test.o
-$ ./a.out 
+$ ./test
+$ echo $?
+7
 ```
