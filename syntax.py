@@ -8,7 +8,7 @@ from lark import ast_utils, Transformer, v_args
 from lark.tree import Meta, Tree
 
 
-class AstNode(ast_utils.Ast, ABC):
+class AstNode(ast_utils.Ast):
     @abstractmethod
     def pretty(self):
         pass
@@ -26,19 +26,22 @@ class Type(AstNode, ast_utils.WithMeta):
         }
 
 
-class _Statement(AstNode, ABC):
-    pass
-
-
-class _Expression(AstNode, ABC):
-    @property
+class _Statement(AstNode):
     @abstractmethod
-    def native_type(self):
+    def pretty(self):
+        pass
+
+
+class _Expression(AstNode):
+    @abstractmethod
+    def pretty(self):
         pass
 
 
 class _Atom(_Expression):
-    pass
+    @abstractmethod
+    def pretty(self):
+        pass
 
 
 @dataclass
@@ -111,11 +114,6 @@ class BinaryOp(_Expression, ast_utils.WithMeta):
     left: _Expression
     op: str
     right: _Expression
-
-    @property
-    def native_type(self):
-        assert (self.left.native_type == self.right.native_type)
-        return self.left.native_type
 
     def pretty(self):
         return {

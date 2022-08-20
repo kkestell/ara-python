@@ -1,5 +1,4 @@
 import os
-from typing import cast
 
 from llvmlite import ir
 
@@ -93,6 +92,7 @@ def build_ir(ast):
         _generate_function(module, function)
         pass
     return str(module)
+
 
 def make_binary(ir, out="test"):
     with open("tmp.ll", "w") as ll:
