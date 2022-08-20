@@ -1,112 +1,175 @@
 # Ara
 
-## Examples
+## Code Generation
+
+<table>
+<thead><tr><th>Source</th><th>IR</th></tr></thead>
+<tbody>
+<tr></tr>
+<tr><td width="50%">
+
+```
+fn main() -> void {
+  return
+}
+
+```
+</td><td>
+
+```llvm
+define void @"main"()
+{
+entry:
+}
+```
+</td></tr>
+<tr></tr>
+<tr><td>
+
+```
+fn main() -> int {
+  return 0
+}
+
+
+```
+</td><td>
+
+```llvm
+define i32 @"main"()
+{
+entry:
+  ret i32 0
+}
+```
+</td></tr>
+<tr></tr>
+<tr><td>
+
+```
+fn main(argc: int) -> int {
+  var x = 1
+  return x
+}
+
+
+```
+</td><td>
+
+```llvm
+define i32 @"main"(i32 %".1")
+{
+entry:
+  %"x" = add i32 0, 1
+  ret i32 %"x"
+}
+```
+</td></tr>
+<tr></tr>
+<tr><td>
+
+```
+fn main() -> int {
+  return 1 + 2
+}
+
+
+```
+</td><td>
+
+```llvm
+define i32 @"main"()
+{
+entry:
+  ret i32 add (i32 1, i32 2)
+}
+```
+</td></tr>
+<tr></tr>
+<tr><td>
+
+```
+fn main() -> int {
+  var x = 0
+  return x
+}
+
+
+```
+</td><td>
+
+```llvm
+define i32 @"main"()
+{
+entry:
+  %"x" = add i32 0, 0
+  ret i32 %"x"
+}
+```
+</td></tr>
+<tr></tr>
+<tr><td>
+
+```
+fn main() -> int {
+  var x = 1 / 2 + 3 * 4 - 5
+  return x
+}
+
+
+```
+</td><td>
+
+```llvm
+define i32 @"main"()
+{
+entry:
+  %"x" = add i32 0, sub (i32 add (i32 udiv (i32 1, i32 2), i32 mul (i32 3, i32 4)), i32 5)
+  ret i32 %"x"
+}
+```
+</td></tr>
+<tr></tr>
+<tr><td>
+
+```
+fn main() -> int {
+  if (true) {
+    return 0
+  }
+  return 1
+}
+
+
+
+
+```
+</td><td>
+
+```llvm
+define i32 @"main"()
+{
+entry:
+  br i1 1, label %"entry.if", label %"entry.endif"
+entry.if:
+  ret i32 0
+entry.endif:
+  ret i32 1
+}
+```
+</td></tr>
+</table>
+
+## Another Example
 
 ### Source
 
 ```
 module foo
 
-fn main(argc: int) -> int {
+fn main() -> int {
   int x = 1 + 2 * 3
-  return 0
-}
-```
-
-### Parse Tree
-
-```
-start
-  source_file
-    module	foo
-    functions
-      function
-        main
-        parameters
-          parameter
-            argc
-            type	int
-        type	int
-        block
-          statements
-            assignment
-              x
-              binary_op
-                int_literal	1
-                +
-                binary_op
-                  int_literal	2
-                  *
-                  int_literal	3
-            return
-              int_literal	0
-```
-
-### AST
-
-```json
-{
-  "node": "source_file",
-  "module": {
-    "node": "module",
-    "name": "foo"
-  },
-  "functions": [
-    {
-      "node": "function",
-      "name": "main",
-      "parameters": [
-        {
-          "node": "parameter",
-          "name": "argc",
-          "type": {
-            "node": "type",
-            "value": "int"
-          }
-        }
-      ],
-      "return_type": {
-        "node": "type",
-        "value": "int"
-      },
-      "block": {
-        "node": "block",
-        "statements": [
-          {
-            "node": "assignment",
-            "name": "x",
-            "expression": {
-              "node": "binary_op",
-              "left": {
-                "node": "int_literal",
-                "value": 1
-              },
-              "op": "+",
-              "right": {
-                "node": "binary_op",
-                "left": {
-                  "node": "int_literal",
-                  "value": 2
-                },
-                "op": "*",
-                "right": {
-                  "node": "int_literal",
-                  "value": 3
-                }
-              }
-            }
-          },
-          {
-            "node": "return",
-            "expression": {
-              "node": "int_literal",
-              "value": 0
-            }
-          }
-        ]
-      }
-    }
-  ]
+  return x
 }
 ```
 
@@ -117,11 +180,11 @@ start
 target triple = "x86_64-unknown-linux-gnu"
 target datalayout = ""
 
-define i32 @"main"(i32 %".1")
+define i32 @"main"()
 {
 entry:
   %"x" = add i32 0, add (i32 1, i32 mul (i32 2, i32 3))
-  ret i32 i32 0
+  ret i32 %"x"
 }
 ```
 
@@ -133,21 +196,21 @@ $ cat ir.s
 ```
 
 ```
-	.text
-	.file	"ir.ll"
-	.globl	main                        # -- Begin function main
-	.p2align	4, 0x90
-	.type	main,@function
+        .text
+        .file   "ir.ll"
+        .globl  main                    # -- Begin function main
+        .p2align        4, 0x90
+        .type   main,@function
 main:                                   # @main
-	.cfi_startproc
+        .cfi_startproc
 # %bb.0:                                # %entry
-	movl	$42, %eax
-	retq
+        movl    $7, %eax
+        retq
 .Lfunc_end0:
-	.size	main, .Lfunc_end0-main
-	.cfi_endproc
+        .size   main, .Lfunc_end0-main
+        .cfi_endproc
                                         # -- End function
-	.section	".note.GNU-stack","",@progbits
+        .section        ".note.GNU-stack","",@progbits
 ```
 
 ### Link & Run
@@ -155,6 +218,4 @@ main:                                   # @main
 ```
 $ clang -o a.out test.o
 $ ./a.out 
-$ echo $?
-42
 ```

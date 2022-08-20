@@ -73,6 +73,22 @@ class StringLiteral(_Atom, ast_utils.WithMeta):
 
 
 @dataclass
+class BoolLiteral(_Atom, ast_utils.WithMeta):
+    meta: Meta
+    value: bool
+
+    @property
+    def native_type(self):
+        return type(bool)
+
+    def pretty(self):
+        return {
+            "node": "bool_literal",
+            "value": self.value
+        }
+
+
+@dataclass
 class VariableReference(_Atom, ast_utils.WithMeta):
     meta: Meta
     name: str
@@ -131,7 +147,7 @@ class Return(_Statement, ast_utils.WithMeta):
     def pretty(self):
         return {
             "node": "return",
-            "expression": self.expression.pretty()
+            "expression": self.expression.pretty() if self.expression is not None else None
         }
 
 
@@ -150,13 +166,13 @@ class Block(AstNode, ast_utils.WithMeta):
 @dataclass
 class If(_Statement, ast_utils.WithMeta):
     meta: Meta
-    condition: _Expression
+    predicate: _Expression
     then: Block
 
     def pretty(self):
         return {
             "node": "if",
-            "condition": self.condition.pretty(),
+            "predicate": self.predicate.pretty(),
             "then": self.then.pretty()
         }
 
@@ -229,10 +245,15 @@ class AstTransformer(Transformer):
     def NAME(self, s):
         return str(s)
 
+    def BOOL(self, b):
+        return bool(b)
+
     def TYPE(self, s):
         return str(s)
 
     def parameters(self, p):
+        if p[0] is None:
+            return []
         return p
 
     def statements(self, s):

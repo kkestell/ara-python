@@ -37,7 +37,7 @@ def compile_ir(engine, llvm_ir):
     return mod
 
 
-def compile(ir: str):
+def compile_to_obj(ir: str):
     target = llvm.Target.from_triple("x86_64-unknown-linux-gnu")
     target_machine = target.create_target_machine()
     engine = create_execution_engine()
@@ -45,15 +45,16 @@ def compile(ir: str):
     with open("test.o", "wb") as obj:
         obj.write(target_machine.emit_object(mod))
 
-# def compile(ir: str):
-#     engine = create_execution_engine()
-#     mod = compile_ir(engine, ir)
-#
-#     # Look up the function pointer (a Python int)
-#     func_ptr = engine.get_function_address("main")
-#
-#     # Run the function via ctypes
-#     cfunc = CFUNCTYPE(c_int, c_int)(func_ptr)
-#     res = cfunc(1)
-#
-#     print("main() =", res)
+
+def compile(ir: str):
+    engine = create_execution_engine()
+    mod = compile_ir(engine, ir)
+
+    # Look up the function pointer (a Python int)
+    func_ptr = engine.get_function_address("main")
+
+    # Run the function via ctypes
+    cfunc = CFUNCTYPE(c_int, c_int)(func_ptr)
+    res = cfunc(1)
+
+    print("main() =", res)

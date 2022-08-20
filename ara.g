@@ -23,11 +23,13 @@ type: TYPE
         | product DIVIDE atom -> binary_op
 ?atom: INT         -> int_literal
      | STRING      -> string_literal
+     | BOOL        -> bool_literal
      | "-" atom    -> neg
      | NAME        -> variable_reference
      | "(" sum ")"
 
 TYPE: "int" | "void"
+BOOL: "true" | "false"
 PLUS: "+"
 MINUS: "-"
 MULTIPLY: "*"

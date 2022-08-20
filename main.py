@@ -6,10 +6,9 @@ from xast import build_ast
 
 program = '''
 module foo
-
-fn main(argc: int) -> int {
+fn main() -> int {
   var x = 1 + 2 * 3
-  return 42
+  return x
 }
 '''
 parse_tree = parse(program)
