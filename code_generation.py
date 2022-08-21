@@ -27,7 +27,7 @@ def _generate_return(node, builder, symbols):
     if node.expression is None:
         builder.ret_void()
     else:
-        builder.ret(_expand_expression(node.expression, builder, symbols))
+        builder.ret(builder.load(_expand_expression(node.expression, builder, symbols)))
 
 
 def _expand_expression(node, builder, symbols):
@@ -53,8 +53,9 @@ def _expand_expression(node, builder, symbols):
 
 def _generate_assignment(node, builder, symbols):
     e = _expand_expression(node.expression, builder, symbols)
-    v = builder.add(ir.Constant(ir.IntType(32), 0), e, node.name)
-    symbols[node.name] = v
+    p = builder.alloca(ir.IntType(32), 1)
+    builder.store(e, p)
+    symbols[node.name] = p
 
 
 def _generate_if(node, builder, symbols):
@@ -63,9 +64,7 @@ def _generate_if(node, builder, symbols):
         _generate_block(node.then, builder, symbols.copy())
 
 
-def _generate_block(block, builder, symbols=None):
-    if symbols is None:
-        symbols = {}
+def _generate_block(block, builder, symbols):
     for s in block.statements:
         if type(s) is Return:
             _generate_return(s, builder, symbols)
@@ -82,16 +81,21 @@ def _generate_function(module, node):
     function = ir.Function(module, function_type, name=node.name)
     block = function.append_basic_block(name="entry")
     builder = ir.IRBuilder(block)
-    _generate_block(node.block, builder)
+    _generate_block(node.block, builder, {})
 
 
-def build_ir(ast):
+def build_ir(ast, debug=False):
     module = ir.Module(name=ast.root.module.name)
     module.triple = "x86_64-unknown-linux-gnu"
     for function in ast.root.functions:
         _generate_function(module, function)
         pass
-    return str(module)
+    output = str(module)
+    if debug:
+        with open("ir.ll", "w") as fp:
+            fp.write(output)
+        os.system("llc ir.ll")
+    return output
 
 
 def make_binary(ir, out="test"):

@@ -6,7 +6,8 @@ program = '''
 module main
 
 fn main() -> int {
-  return 0
+  var x = 1
+  return x
 }
 '''
 
@@ -16,7 +17,7 @@ print(parse_tree.pretty())
 ast = build_ast(parse_tree)
 print(ast.pretty())
 
-ir = build_ir(ast)
+ir = build_ir(ast, debug=True)
 print(ir)
 
 make_binary(ir)

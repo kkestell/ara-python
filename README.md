@@ -47,7 +47,7 @@ entry:
 <tr><td>
 
 ```
-fn main(argc: int) -> int {
+fn main() -> int {
   var x = 1
   return x
 }
@@ -57,104 +57,13 @@ fn main(argc: int) -> int {
 </td><td>
 
 ```llvm
-define i32 @"main"(i32 %".1")
-{
-entry:
-  %"x" = add i32 0, 1
-  ret i32 %"x"
-}
-```
-</td></tr>
-<tr></tr>
-<tr><td>
-
-```
-fn main() -> int {
-  return 1 + 2
-}
-
-
-```
-</td><td>
-
-```llvm
 define i32 @"main"()
 {
 entry:
-  ret i32 add (i32 1, i32 2)
-}
-```
-</td></tr>
-<tr></tr>
-<tr><td>
-
-```
-fn main() -> int {
-  var x = 0
-  return x
-}
-
-
-```
-</td><td>
-
-```llvm
-define i32 @"main"()
-{
-entry:
-  %"x" = add i32 0, 0
-  ret i32 %"x"
-}
-```
-</td></tr>
-<tr></tr>
-<tr><td>
-
-```
-fn main() -> int {
-  var x = 1 / 2 + 3 * 4 - 5
-  return x
-}
-
-
-```
-</td><td>
-
-```llvm
-define i32 @"main"()
-{
-entry:
-  %"x" = add i32 0, sub (i32 add (i32 udiv (i32 1, i32 2), i32 mul (i32 3, i32 4)), i32 5)
-  ret i32 %"x"
-}
-```
-</td></tr>
-<tr></tr>
-<tr><td>
-
-```
-fn main() -> int {
-  if (true) {
-    return 0
-  }
-  return 1
-}
-
-
-
-
-```
-</td><td>
-
-```llvm
-define i32 @"main"()
-{
-entry:
-  br i1 1, label %"entry.if", label %"entry.endif"
-entry.if:
-  ret i32 0
-entry.endif:
-  ret i32 1
+  %".2" = alloca i32, i32 1
+  store i32 1, i32* %".2"
+  %".4" = load i32, i32* %".2"
+  ret i32 %".4"
 }
 ```
 </td></tr>
