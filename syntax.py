@@ -1,29 +1,20 @@
+import dataclasses
 import json
+import re
 import sys
-from abc import abstractmethod, ABC
+from abc import abstractmethod
 from dataclasses import dataclass
+from keyword import iskeyword
 from typing import List
 
-from lark import ast_utils, Transformer, v_args
-from lark.tree import Meta, Tree
+from lark import ast_utils, Transformer
+from lark.tree import Meta
 
 
 class AstNode(ast_utils.Ast):
     @abstractmethod
     def pretty(self):
         pass
-
-
-@dataclass
-class Type(AstNode, ast_utils.WithMeta):
-    meta: Meta
-    value: str
-
-    def pretty(self):
-        return {
-            "node": "type",
-            "value": self.value
-        }
 
 
 class _Statement(AstNode):
@@ -39,9 +30,24 @@ class _Expression(AstNode):
 
 
 class _Atom(_Expression):
+    type: type = None
+
     @abstractmethod
     def pretty(self):
         pass
+
+
+@dataclass
+class Negate(_Atom, ast_utils.WithMeta):
+    meta: Meta
+    atom: _Atom
+
+    def pretty(self):
+        return {
+            "type": self.type,
+            "node": "negate",
+            "atom": self.atom.pretty()
+        }
 
 
 @dataclass
@@ -49,13 +55,23 @@ class IntLiteral(_Atom, ast_utils.WithMeta):
     meta: Meta
     value: int
 
-    @property
-    def native_type(self):
-        return type(int)
-
     def pretty(self):
         return {
             "node": "int_literal",
+            "type": self.type,
+            "value": self.value
+        }
+
+
+@dataclass
+class FloatLiteral(_Atom, ast_utils.WithMeta):
+    meta: Meta
+    value: float
+
+    def pretty(self):
+        return {
+            "node": "float_literal",
+            "type": self.type,
             "value": self.value
         }
 
@@ -65,13 +81,10 @@ class StringLiteral(_Atom, ast_utils.WithMeta):
     meta: Meta
     value: str
 
-    @property
-    def native_type(self):
-        return type(str)
-
     def pretty(self):
         return {
             "node": "string_literal",
+            "type": self.type,
             "value": self.value
         }
 
@@ -81,13 +94,10 @@ class BoolLiteral(_Atom, ast_utils.WithMeta):
     meta: Meta
     value: bool
 
-    @property
-    def native_type(self):
-        return type(bool)
-
     def pretty(self):
         return {
             "node": "bool_literal",
+            "type": self.type,
             "value": self.value
         }
 
@@ -97,19 +107,16 @@ class VariableReference(_Atom, ast_utils.WithMeta):
     meta: Meta
     name: str
 
-    @property
-    def native_type(self):
-        return type(str)
-
     def pretty(self):
         return {
             "node": "variable_reference",
+            "type": self.type,
             "name": self.name
         }
 
 
 @dataclass
-class BinaryOp(_Expression, ast_utils.WithMeta):
+class BinaryExpression(_Expression, ast_utils.WithMeta):
     meta: Meta
     left: _Expression
     op: str
@@ -117,10 +124,25 @@ class BinaryOp(_Expression, ast_utils.WithMeta):
 
     def pretty(self):
         return {
-            "node": "binary_op",
+            "node": "binary_expression",
+            "type": self.type,
             "left": self.left.pretty(),
             "op": self.op,
             "right": self.right.pretty()
+        }
+
+
+@dataclass
+class VariableDeclaration(_Statement, ast_utils.WithMeta):
+    meta: Meta
+    name: str
+    expression: _Expression
+
+    def pretty(self):
+        return {
+            "node": "variable_declaration",
+            "name": self.name,
+            "expression": self.expression.pretty()
         }
 
 
@@ -192,30 +214,30 @@ class Module(AstNode, ast_utils.WithMeta):
 class Parameter(AstNode, ast_utils.WithMeta):
     meta: Meta
     name: str
-    type: Type
+    type: str
 
     def pretty(self):
         return {
             "node": "parameter",
             "name": self.name,
-            "type": self.type.pretty()
+            "type": self.type
         }
 
 
 @dataclass
-class Function(AstNode, ast_utils.WithMeta):
+class FunctionDefinition(AstNode, ast_utils.WithMeta):
     meta: Meta
     name: str
     parameters: List[Parameter]
-    return_type: Type
+    return_type: str
     block: Block
 
     def pretty(self):
         return {
-            "node": "function",
+            "node": "function_definition",
             "name": self.name,
             "parameters": [x.pretty() for x in self.parameters],
-            "return_type": self.return_type.pretty(),
+            "return_type": self.return_type,
             "block": self.block.pretty()
         }
 
@@ -224,13 +246,13 @@ class Function(AstNode, ast_utils.WithMeta):
 class SourceFile(AstNode, ast_utils.WithMeta):
     meta: Meta
     module: Module
-    functions: List[Function]
+    function_definitions: List[FunctionDefinition]
 
     def pretty(self):
         return {
             "node": "source_file",
             "module": self.module.pretty(),
-            "functions": [x.pretty() for x in self.functions]
+            "function_definitions": [x.pretty() for x in self.function_definitions]
         }
 
 
@@ -243,38 +265,101 @@ class Ast(object):
 
 
 class AstTransformer(Transformer):
-    def STRING(self, s):
-        return s[1:-1]
+    def STRING(self, x):
+        return x[1:-1]
 
-    def INT(self, n):
-        return int(n)
+    def INT(self, x):
+        return int(x)
 
-    def NAME(self, s):
-        return str(s)
+    def FLOAT(self, x):
+        return float(x)
 
-    def BOOL(self, b):
-        return bool(b)
+    def NAME(self, x):
+        return str(x)
 
-    def TYPE(self, s):
-        return str(s)
+    def BOOL(self, x):
+        return bool(x)
 
-    def parameters(self, p):
-        if p[0] is None:
+    def TYPE(self, x):
+        return str(x)
+
+    def parameters(self, x):
+        if x[0] is None:
             return []
-        return p
-
-    def statements(self, s):
-        return s
-
-    def functions(self, f):
-        return f
-
-    @v_args(inline=True)
-    def start(self, x):
         return x
 
+    def statements(self, x):
+        return x
 
-def build_ast(parse_tree: Tree):
+    def function_definitions(self, x):
+        return x
+
+    def start(self, x):
+        return x[0]
+
+
+class AstVisitor(object):
+    def visit(self, node):
+        if isinstance(node, list):
+            for c in node:
+                self.visit(c)
+        elif dataclasses.is_dataclass(node):
+            for f in dataclasses.fields(type(node)):
+                child = getattr(node, f.name)
+                self.visit(child)
+            meth_name = self._camel_to_snake(type(node).__name__)
+            if iskeyword(meth_name):
+                meth_name += "_"
+            if not hasattr(self, meth_name):
+                self.default(node)
+            else:
+                meth = getattr(self, meth_name)
+                meth(node)
+
+    def default(self, node):
+        pass
+
+    @staticmethod
+    def _camel_to_snake(name):
+        name = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
+        return re.sub('([a-z0-9])([A-Z])', r'\1_\2', name).lower()
+
+
+class TypeExpressions(AstVisitor):
+    def __init__(self):
+        self.symbols = {}
+
+    def int_literal(self, node):
+        node.type = "i64"
+
+    def float_literal(self, node):
+        node.type = "f64"
+
+    def bool_literal(self, node):
+        node.type = "bool"
+
+    def binary_expression(self, node):
+        assert(node.left.type == node.right.type)
+        node.type = node.left.type
+
+    def negate(self, node):
+        node.type = node.atom.type
+
+    def variable_declaration(self, node):
+        node.type = node.expression.type
+        self.symbols[node.name] = node.type
+
+    def return_(self, node):
+        node.type = node.expression.type
+
+    def variable_reference(self, node):
+        node.type = self.symbols[node.name]
+
+
+def build_ast(parse_tree):
     this_module = sys.modules[__name__]
     transformer = ast_utils.create_transformer(this_module, AstTransformer())
-    return Ast(transformer.transform(parse_tree))
+    ast = Ast(transformer.transform(parse_tree))
+    for f in ast.root.function_definitions:
+        TypeExpressions().visit(f)
+    return ast

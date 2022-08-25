@@ -5,9 +5,13 @@ from syntax import build_ast
 program = '''
 module main
 
-fn main() -> int {
+fn main() -> i64 {
   var x = 1
-  return x
+  var y = 1.2576543
+  if y < 1.0 {
+    x = 2
+  }
+  return x * 2
 }
 '''
 
