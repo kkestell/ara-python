@@ -215,5 +215,5 @@ entry.endif:
 ```
 $ ./test
 $ echo $?
-2
+1
 ```
