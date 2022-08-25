@@ -5,13 +5,16 @@ from syntax import build_ast
 program = '''
 module main
 
+fn is_even(x: i64) -> bool {
+    return x % 2 == 0
+}
+
 fn main() -> i64 {
-  var x = 1
-  var y = 1.2576543
-  if y < 1.0 {
-    x = 2
+  var r = 0
+  if is_even(2) {
+    r = 1
   }
-  return x * 2
+  return r
 }
 '''
 

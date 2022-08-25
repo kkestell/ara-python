@@ -51,6 +51,21 @@ class Negate(_Atom, ast_utils.WithMeta):
 
 
 @dataclass
+class FunctionCall(_Atom, ast_utils.WithMeta):
+    meta: Meta
+    name: str
+    arguments: List[_Expression]
+
+    def pretty(self):
+        return {
+            "type": self.type,
+            "node": "function_call",
+            "name": self.name,
+            "arguments": [x.pretty() for x in self.arguments]
+        }
+
+
+@dataclass
 class IntLiteral(_Atom, ast_utils.WithMeta):
     meta: Meta
     value: int
@@ -288,6 +303,11 @@ class AstTransformer(Transformer):
             return []
         return x
 
+    def arguments(self, x):
+        if x[0] is None:
+            return []
+        return x
+
     def statements(self, x):
         return x
 
@@ -304,20 +324,20 @@ class AstVisitor(object):
             for c in node:
                 self.visit(c)
         elif dataclasses.is_dataclass(node):
+            meth_name = self._camel_to_snake(type(node).__name__)
+            if iskeyword(meth_name):
+                meth_name = f"{meth_name}_"
+            enter_meth_name = f"enter_{meth_name}"
+            exit_meth_name = f"exit_{meth_name}"
+            if hasattr(self, enter_meth_name):
+                meth = getattr(self, enter_meth_name)
+                meth(node)
             for f in dataclasses.fields(type(node)):
                 child = getattr(node, f.name)
                 self.visit(child)
-            meth_name = self._camel_to_snake(type(node).__name__)
-            if iskeyword(meth_name):
-                meth_name += "_"
-            if not hasattr(self, meth_name):
-                self.default(node)
-            else:
-                meth = getattr(self, meth_name)
+            if hasattr(self, exit_meth_name):
+                meth = getattr(self, exit_meth_name)
                 meth(node)
-
-    def default(self, node):
-        pass
 
     @staticmethod
     def _camel_to_snake(name):
@@ -329,30 +349,34 @@ class TypeExpressions(AstVisitor):
     def __init__(self):
         self.symbols = {}
 
-    def int_literal(self, node):
+    def enter_function_definition(self, node):
+        for p in node.parameters:
+            self.symbols[p.name] = p.type
+
+    def exit_int_literal(self, node):
         node.type = "i64"
 
-    def float_literal(self, node):
+    def exit_float_literal(self, node):
         node.type = "f64"
 
-    def bool_literal(self, node):
+    def exit_bool_literal(self, node):
         node.type = "bool"
 
-    def binary_expression(self, node):
+    def exit_binary_expression(self, node):
         assert(node.left.type == node.right.type)
         node.type = node.left.type
 
-    def negate(self, node):
+    def exit_negate(self, node):
         node.type = node.atom.type
 
-    def variable_declaration(self, node):
+    def exit_variable_declaration(self, node):
         node.type = node.expression.type
         self.symbols[node.name] = node.type
 
-    def return_(self, node):
+    def exit_return_(self, node):
         node.type = node.expression.type
 
-    def variable_reference(self, node):
+    def exit_variable_reference(self, node):
         node.type = self.symbols[node.name]
 
 

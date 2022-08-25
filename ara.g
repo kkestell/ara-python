@@ -48,8 +48,11 @@ assignment                  : NAME "=" expression
                             | STRING                                                        -> string_literal
                             | BOOL                                                          -> bool_literal
                             | "-" atom                                                      -> negate
+                            | NAME "(" arguments ")"                                        -> function_call
                             | NAME                                                          -> variable_reference
                             | "(" additive_expression ")"
+
+arguments                   : [expression ( "," expression )*]
 
 TYPE                        : "void" | "i64" | "f64" | "bool"
 BOOL                        : "true" | "false"

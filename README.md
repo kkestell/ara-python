@@ -4,16 +4,19 @@
 
 ### Source
 
-```
+```rust
 module main
 
+fn is_even(x: i64) -> bool {
+    return x % 2 == 0
+}
+
 fn main() -> i64 {
-  var x = 1
-  var y = 1.2576543
-  if y < 1.0 {
-    x = 2
+  var r = 0
+  if is_even(2) {
+    r = 1
   }
-  return x * 2
+  return r
 }
 ```
 
@@ -25,32 +28,43 @@ start
     module	main
     function_definitions
       function_definition
+        is_even
+        parameters
+          parameter
+            x
+            i64
+        bool
+        block
+          statements
+            return
+              binary_expression
+                binary_expression
+                  variable_reference	x
+                  %
+                  int_literal	2
+                ==
+                int_literal	0
+      function_definition
         main
         parameters	None
         i64
         block
           statements
             variable_declaration
-              x
-              int_literal	1
-            variable_declaration
-              y
-              float_literal	1.2576543
+              r
+              int_literal	0
             if
-              binary_expression
-                variable_reference	y
-                <
-                float_literal	1.0
+              function_call
+                is_even
+                arguments
+                  int_literal	2
               block
                 statements
                   assignment
-                    x
-                    int_literal	2
+                    r
+                    int_literal	1
             return
-              binary_expression
-                variable_reference	x
-                *
-                int_literal	2
+              variable_reference	r
 ```
 
 ### AST
@@ -65,6 +79,51 @@ start
   "function_definitions": [
     {
       "node": "function_definition",
+      "name": "is_even",
+      "parameters": [
+        {
+          "node": "parameter",
+          "name": "x",
+          "type": "i64"
+        }
+      ],
+      "return_type": "bool",
+      "block": {
+        "node": "block",
+        "statements": [
+          {
+            "node": "return",
+            "expression": {
+              "node": "binary_expression",
+              "type": "i64",
+              "left": {
+                "node": "binary_expression",
+                "type": "i64",
+                "left": {
+                  "node": "variable_reference",
+                  "type": "i64",
+                  "name": "x"
+                },
+                "op": "%",
+                "right": {
+                  "node": "int_literal",
+                  "type": "i64",
+                  "value": 2
+                }
+              },
+              "op": "==",
+              "right": {
+                "node": "int_literal",
+                "type": "i64",
+                "value": 0
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "function_definition",
       "name": "main",
       "parameters": [],
       "return_type": "i64",
@@ -73,49 +132,37 @@ start
         "statements": [
           {
             "node": "variable_declaration",
-            "name": "x",
+            "name": "r",
             "expression": {
               "node": "int_literal",
               "type": "i64",
-              "value": 1
-            }
-          },
-          {
-            "node": "variable_declaration",
-            "name": "y",
-            "expression": {
-              "node": "float_literal",
-              "type": "f64",
-              "value": 1.2576543
+              "value": 0
             }
           },
           {
             "node": "if",
             "predicate": {
-              "node": "binary_expression",
-              "type": "f64",
-              "left": {
-                "node": "variable_reference",
-                "type": "f64",
-                "name": "y"
-              },
-              "op": "<",
-              "right": {
-                "node": "float_literal",
-                "type": "f64",
-                "value": 1.0
-              }
+              "type": null,
+              "node": "function_call",
+              "name": "is_even",
+              "arguments": [
+                {
+                  "node": "int_literal",
+                  "type": "i64",
+                  "value": 2
+                }
+              ]
             },
             "then": {
               "node": "block",
               "statements": [
                 {
                   "node": "assignment",
-                  "name": "x",
+                  "name": "r",
                   "expression": {
                     "node": "int_literal",
                     "type": "i64",
-                    "value": 2
+                    "value": 1
                   }
                 }
               ]
@@ -124,19 +171,9 @@ start
           {
             "node": "return",
             "expression": {
-              "node": "binary_expression",
+              "node": "variable_reference",
               "type": "i64",
-              "left": {
-                "node": "variable_reference",
-                "type": "i64",
-                "name": "x"
-              },
-              "op": "*",
-              "right": {
-                "node": "int_literal",
-                "type": "i64",
-                "value": 2
-              }
+              "name": "r"
             }
           }
         ]
